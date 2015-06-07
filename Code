@@ -1,0 +1,211 @@
+/*
+*  doomsday.c
+*  A program to test a function dayOfWeek which determines which
+*  day of the week a particular date falls on.
+*  (only for dates after the start of the Gregorian calendar).
+*
+*  Program stub created by Richard Buckland on 17/03/14
+*  This program by Benjamin Ly
+*  Freely licensed under Creative Commons CC-BY-3.0
+*
+*
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
+#define THURSDAY 0
+#define FRIDAY   1
+#define SATURDAY 2
+#define SUNDAY   3
+#define MONDAY   4
+#define TUESDAY  5
+#define WEDNESDAY 6
+
+#define TRUE 1
+#define FALSE 0
+#define DAYS_PER_WEEK 7
+
+int dayOfWeek (int doomsday, int leapYear, int month, int day);
+int daysFromDoomsday (int leapYear, int month, int day);
+int dayOfDoomsday (int leapYear, int month);
+void assertions (int doomsday, int leapYear, int month, int day);
+
+
+int main (int argc, char *argv[]) {
+   assert (dayOfWeek (THURSDAY,  FALSE,  4,  4) == THURSDAY);
+   assert (dayOfWeek (FRIDAY,    FALSE,  6,  6) == FRIDAY);
+   assert (dayOfWeek (MONDAY,    FALSE,  8,  8) == MONDAY);
+   assert (dayOfWeek (WEDNESDAY, FALSE, 10, 10) == WEDNESDAY);
+   assert (dayOfWeek (FRIDAY,    FALSE, 12, 12) == FRIDAY);
+   assert (dayOfWeek (THURSDAY,  FALSE,  9,  5) == THURSDAY);
+   assert (dayOfWeek (FRIDAY,    FALSE,  5,  9) == FRIDAY);
+   assert (dayOfWeek (SUNDAY,    FALSE,  7, 11) == SUNDAY);
+   assert (dayOfWeek (TUESDAY,   FALSE, 11,  7) == TUESDAY);
+   assert (dayOfWeek (WEDNESDAY, FALSE,  3,  7) == WEDNESDAY);
+
+   assert (dayOfWeek (THURSDAY,  FALSE,  4,  5) == FRIDAY);
+   assert (dayOfWeek (SATURDAY,  FALSE,  6,  5) == FRIDAY);
+   assert (dayOfWeek (MONDAY,    FALSE,  8,  9) == TUESDAY);
+   assert (dayOfWeek (WEDNESDAY, FALSE, 10,  9) == TUESDAY);
+   assert (dayOfWeek (FRIDAY,    FALSE, 12, 20) == SATURDAY);
+   assert (dayOfWeek (THURSDAY,  FALSE,  9,  9) == MONDAY);
+   assert (dayOfWeek (FRIDAY,    FALSE,  5,  5) == MONDAY);
+   assert (dayOfWeek (SUNDAY,    FALSE,  7,  7) == WEDNESDAY);
+   assert (dayOfWeek (TUESDAY,   FALSE, 11, 11) == SATURDAY);
+   assert (dayOfWeek (THURSDAY,  FALSE,  3, 30) == SATURDAY);
+ 
+   assert (dayOfWeek (TUESDAY,   FALSE,  2,  28) == TUESDAY);
+   assert (dayOfWeek (TUESDAY,   FALSE,  2,  27) == MONDAY);
+   assert (dayOfWeek (THURSDAY,  FALSE,  1,  3)  == THURSDAY);
+ 
+   printf ("all tests passed - You are awesome!\n");
+
+   //My unit tests! (Birthdays of friends and family)
+  
+   assert (dayOfWeek (SUNDAY,    FALSE,  6,  9) == WEDNESDAY);
+   assert (dayOfWeek (SUNDAY,    FALSE,  3,  30) == TUESDAY);
+   assert (dayOfWeek (SATURDAY,  TRUE,   9,  21) == MONDAY);
+   assert (dayOfWeek (THURSDAY,  FALSE,  6,  13) == THURSDAY);
+   assert (dayOfWeek (WEDNESDAY, TRUE,  11,  5) == MONDAY);
+
+   printf ("your unit tests worked too! Fantastic!\n");
+
+   return EXIT_SUCCESS;
+}
+ 
+ 
+// given the doomsday for a year, and whether or not it is a
+// leap year, this function return the day of the week for any
+// given month and day in the year.
+ 
+int dayOfWeek (int doomsday, int leapYear, int month, int day) {
+   assertions (doomsday,leapYear,month,day);   
+   int dayOfWeek;
+
+	//If function checks for whether or not the day of the month is less
+   //than or above the closest relevant doomsday, then calculates 
+   //appropriately.
+
+	if (day >= dayOfDoomsday(leapYear,month)) {
+		dayOfWeek = (doomsday + daysFromDoomsday(leapYear,month,day)) % 
+               DAYS_PER_WEEK;
+
+	} else {
+		dayOfWeek = (DAYS_PER_WEEK + doomsday - daysFromDoomsday
+					(leapYear,month,day)) % DAYS_PER_WEEK;
+	}
+
+return dayOfWeek;
+}
+
+//This function finds how many days there are between the doomsday
+//of the month and the given day of the month.
+
+int daysFromDoomsday (int leapYear, int month, int day) {
+	int daysFromDoomsday;
+
+	if (day >= dayOfDoomsday (leapYear,month) ) {
+		daysFromDoomsday = 
+			(day - dayOfDoomsday(leapYear,month)) % DAYS_PER_WEEK ;
+	} else {
+		daysFromDoomsday = 
+			(dayOfDoomsday(leapYear,month) - day) % DAYS_PER_WEEK ;
+	}
+
+return daysFromDoomsday;
+}
+
+//This function finds the day that the doomsday lies on for the 
+//given month.
+
+int dayOfDoomsday (int leapYear, int month) {
+
+	int doomsdayOfMonth = 0;
+
+	if (month == 1) {
+		if (leapYear == TRUE) {
+			doomsdayOfMonth = 4;
+		} else {
+			doomsdayOfMonth = 3;
+		}
+	}
+
+	if (month == 2) {
+		if (leapYear == TRUE) {
+			doomsdayOfMonth = 29;
+		} else {
+			doomsdayOfMonth = 28;
+		}
+	}
+
+	if (month == 3) {
+		doomsdayOfMonth = 0;
+	}
+
+	if (month == 4) {
+		doomsdayOfMonth = 4;
+	}
+
+	if (month == 5) {
+		doomsdayOfMonth = 9;
+	}
+	
+	if (month == 6) {
+		doomsdayOfMonth = 6;
+	}
+
+	if (month == 7) {
+		doomsdayOfMonth = 11;
+	}
+
+	if (month == 8) {
+		doomsdayOfMonth = 8;
+	}
+	
+	if (month == 9) {
+		doomsdayOfMonth = 5;
+	}
+
+	if (month == 10) {
+		doomsdayOfMonth = 10;
+	}
+
+	if (month == 11) {
+		doomsdayOfMonth = 7;
+	}
+
+	if (month == 12) {
+		doomsdayOfMonth = 12;
+	}
+
+	return doomsdayOfMonth;
+}
+
+//This function asserts that all inputs are valid.
+
+void assertions (int doomsday, int leapYear, int month, int day) {
+	
+	assert ( (doomsday <= WEDNESDAY)&&(doomsday >= THURSDAY) );
+	assert ( (leapYear == TRUE)||(leapYear == FALSE) );
+	assert ( (month >= 1)&&(month <= 12) );
+
+	if (month == 1 || month == 3 || month == 5 || month == 7 ||
+			month == 8 || month == 10 || month == 12) {
+		assert (day >= 1 && day <= 31);
+	}
+
+	if (month == 4 || month == 6 || month == 9 || month == 11) {
+		assert (day >= 1 && day <= 31);	
+ 	}
+
+	if (month == 2 && leapYear == FALSE) {
+		assert (day >= 1 && day <= 28);
+	}
+
+	if (month == 2 && leapYear == FALSE) {
+		assert (day >= 1 && day <= 29);
+	}
+}
+
